@@ -1,0 +1,60 @@
+﻿@page "/"
+@using System.Text.Json
+@inject DocumentIntelligenceService DocumentIntelligenceService
+
+<PageTitle>Text to Speech POC</PageTitle>
+
+<h1>Text to Speech POC</h1>
+
+Use this page to upload a file, extract text from it, then convert the text to speech. You can then download the audio file.
+
+<h2>Upload a file</h2>
+
+<InputFile OnChange="HandleFileSelected" />
+
+@if (selectedfile != null)
+{
+    <p>Selected file: @selectedfile.Name</p>
+}
+
+<h2>Extract text from the file</h2>
+<div>
+    <label for="systemPrompt">System Prompt:</label>
+    <textarea id="systemPrompt" @bind="systemPrompt" rows="8" cols="50"></textarea>
+</div>
+
+<div>
+    <label for="userPrompt">User Prompt:</label>
+    <textarea id="userPrompt" @bind="userPrompt" rows="4" cols="50"></textarea>
+</div>
+
+<button @onclick="AnalyzeFile">Analyze File</button>
+
+<div>
+    <label for="parsedText">Parsed:</label>
+    <textarea id="parsedText" @bind="parsedText" rows="4" cols="50"></textarea>
+</div>
+
+
+@code {
+    private IBrowserFile selectedfile;
+    private string systemPrompt;
+    private string userPrompt;
+    private string parsedText;
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedfile = e.File;
+    }
+
+    private async Task AnalyzeFile()
+    {
+        if (selectedfile != null)
+        {
+            using var stream = selectedfile.OpenReadStream();
+            var analyzeResult = await DocumentIntelligenceService.ExtractTextFromFileAsync(stream);
+            var cleanedResult = DocumentIntelligenceService.CleanAnalyzeResult(analyzeResult);
+            parsedText = JsonSerializer.Serialize(cleanedResult, new JsonSerializerOptions { WriteIndented = true });
+        }
+    }
+}
