@@ -42,10 +42,23 @@
             </div>
         </div>
         <div class="settings-tab-content @((activeTab == 2) ? "active" : "")">
-            <h3>Log</h3>
-            <div>
-                <label for="parsedText">Parsed:</label>
-                <textarea id="parsedText" @bind="parsedText" rows="20" cols="50"></textarea>
+            <h3>Logs</h3>
+            <div class="nested-tab-buttons">
+                <div class="nested-tab-button @((activeLogTab == 1) ? "active" : "")" @onclick="ShowDocIntelligenceOutput">Document Intelligence</div>
+                <div class="nested-tab-button @((activeLogTab == 2) ? "active" : "")" @onclick="ShowCleanedDocIntelligenceOutput">Cleaned Doc Intelligence</div>
+                <div class="nested-tab-button @((activeLogTab == 3) ? "active" : "")" @onclick="ShowLLMOutput">Azure OpenAI</div>
+            </div>
+            <div class="nested-tab-content @((activeLogTab == 1) ? "active" : "")">
+                <label for="docIntelligenceOutput">Document Intelligence Output:</label>
+                <textarea id="docIntelligenceOutput" @bind="docIntelligenceOutput" rows="20" cols="50"></textarea>
+            </div>
+            <div class="nested-tab-content @((activeLogTab == 2) ? "active" : "")">
+                <label for="cleanedDocIntelligenceOutput">Cleaned Document Intelligence Output:</label>
+                <textarea id="cleanedDocIntelligenceOutput" @bind="cleanedDocIntelligenceOutput" rows="20" cols="50"></textarea>
+            </div>
+            <div class="nested-tab-content @((activeLogTab == 3) ? "active" : "")">
+                <label for="llmOutput">Azure OpenAI LLM Output:</label>
+                <textarea id="llmOutput" @bind="llmOutput" rows="20" cols="50"></textarea>
             </div>
         </div>
     </div>

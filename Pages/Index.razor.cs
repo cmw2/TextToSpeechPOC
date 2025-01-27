@@ -14,9 +14,12 @@ public partial class Index
     private IBrowserFile selectedfile;
     private string systemPrompt;
     private string userPrompt;
-    private string parsedText;
+    private string docIntelligenceOutput;
+    private string cleanedDocIntelligenceOutput;
+    private string llmOutput;
     private bool showSidebar = false;
     private int activeTab = 1;
+    private int activeLogTab = 1;
 
     // Inject the options
     [Inject]
@@ -43,8 +46,9 @@ public partial class Index
         {
             using var stream = selectedfile.OpenReadStream();
             var analyzeResult = await DocumentIntelligenceService.ExtractTextFromFileAsync(stream);
+            docIntelligenceOutput = JsonSerializer.Serialize(analyzeResult, new JsonSerializerOptions { WriteIndented = true });
             var cleanedResult = DocumentIntelligenceService.CleanAnalyzeResult(analyzeResult);
-            parsedText = JsonSerializer.Serialize(cleanedResult, new JsonSerializerOptions { WriteIndented = true });
+            cleanedDocIntelligenceOutput = JsonSerializer.Serialize(cleanedResult, new JsonSerializerOptions { WriteIndented = true });
         }
     }
 
@@ -63,4 +67,18 @@ public partial class Index
         showSidebar = true;
         activeTab = 2;
     }
+    private void ShowDocIntelligenceOutput()
+    {
+        activeLogTab = 1;
+    }
+
+    private void ShowCleanedDocIntelligenceOutput()
+    {
+        activeLogTab = 2;
+    }
+
+    private void ShowLLMOutput()
+    {
+        activeLogTab = 3;
+    }    
 }

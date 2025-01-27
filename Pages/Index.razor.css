@@ -64,6 +64,42 @@
     display: block;
 }
 
+.nested-tab-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: -1px; /* Align with nested tab content border */
+}
+
+.nested-tab-button {
+    flex: 1;
+    padding: 10px;
+    background: #f1f1f1;
+    border: 1px solid #ccc;
+    border-bottom: none; /* Remove bottom border to connect with nested tab content */
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.3s;
+}
+
+.nested-tab-button.active {
+    background: #fff;
+    border-bottom: 1px solid #fff; /* Match nested tab content background */
+}
+
+.nested-tab-button:hover {
+    background: #e1e1e1;
+}
+
+.nested-tab-content {
+    display: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.nested-tab-content.active {
+    display: block;
+}
+
 .settings-button {
     position: absolute;
     top: 10px;
