@@ -1,34 +1,53 @@
 ﻿@page "/"
 
 <PageTitle>Text to Speech POC</PageTitle>
+<div class="container">
+    <div class="main-content">
+        <h1>Text to Speech POC</h1>
+        <p>Use this page to upload a file, extract text from it, then convert the text to speech. You can then download the audio file.</p>
+        
+        <h2>Upload a file</h2>
 
-<h1>Text to Speech POC</h1>
+        <InputFile OnChange="HandleFileSelected" />
 
-Use this page to upload a file, extract text from it, then convert the text to speech. You can then download the audio file.
+        @if (selectedfile != null)
+        {
+            <p>Selected file: @selectedfile.Name</p>
+        }
 
-<h2>Upload a file</h2>
+        <h2>Extract text from the file</h2>
 
-<InputFile OnChange="HandleFileSelected" />
+        <button @onclick="AnalyzeFile">Analyze File</button>
 
-@if (selectedfile != null)
-{
-    <p>Selected file: @selectedfile.Name</p>
-}
+        <button class="settings-button" @onclick="ToggleSidebar">
+            <i class="fas fa-cog"></i>
+        </button>
+    </div>
 
-<h2>Extract text from the file</h2>
-<div>
-    <label for="systemPrompt">System Prompt:</label>
-    <textarea id="systemPrompt" @bind="systemPrompt" rows="8" cols="50"></textarea>
+    <div class="settings-sidebar @((showSidebar) ? "active" : "")">
+        <div class="settings-tab-buttons">
+            <div class="settings-tab-button @((activeTab == 1) ? "active" : "")" @onclick="ShowSettings">Settings</div>
+            <div class="settings-tab-button @((activeTab == 2) ? "active" : "")" @onclick="ShowLog">Log</div>
+        </div>
+        <div class="settings-tab-content @((activeTab == 1) ? "active" : "")">
+            <h3>Settings</h3>
+            <div>
+                <label for="systemPrompt">System Prompt:</label>
+                <textarea id="systemPrompt" @bind="systemPrompt" rows="8" cols="50"></textarea>
+            </div>
+
+            <div>
+                <label for="userPrompt">User Prompt:</label>
+                <textarea id="userPrompt" @bind="userPrompt" rows="6" cols="50"></textarea>
+            </div>
+        </div>
+        <div class="settings-tab-content @((activeTab == 2) ? "active" : "")">
+            <h3>Log</h3>
+            <div>
+                <label for="parsedText">Parsed:</label>
+                <textarea id="parsedText" @bind="parsedText" rows="20" cols="50"></textarea>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div>
-    <label for="userPrompt">User Prompt:</label>
-    <textarea id="userPrompt" @bind="userPrompt" rows="4" cols="50"></textarea>
-</div>
-
-<button @onclick="AnalyzeFile">Analyze File</button>
-
-<div>
-    <label for="parsedText">Parsed:</label>
-    <textarea id="parsedText" @bind="parsedText" rows="4" cols="50"></textarea>
-</div>

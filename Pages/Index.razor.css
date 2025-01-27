@@ -1,0 +1,79 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    position: relative;
+    overflow: auto;
+}
+
+.settings-sidebar {
+    flex-basis: auto; /* Allow the sidebar to size based on its content */
+    min-width: 300px; /* Minimum width of the sidebar */
+    max-width: 500px; /* Maximum width of the sidebar */
+    flex-shrink: 0; /* Prevent the sidebar from shrinking */
+    display: none;
+    flex-direction: column;
+    padding: 20px;
+    border-left: 1px solid #ccc;
+    overflow: auto; /* Allow vertical scrolling if needed */
+}
+
+.settings-sidebar.active {
+    display: flex;
+    flex-grow: 1;
+}
+
+.settings-tab-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: -1px;
+}
+
+.settings-tab-button {
+    flex: 1;
+    padding: 10px;
+    background: #f1f1f1;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.3s;
+}
+
+.settings-tab-button.active {
+    background: #fff;
+    border-bottom: 1px solid #fff;
+}
+
+.settings-tab-button:hover {
+    background: #e1e1e1;
+}
+
+.settings-tab-content {
+    display: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.settings-tab-content.active {
+    display: block;
+}
+
+.settings-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.settings-button i {
+    color: #000;
+}

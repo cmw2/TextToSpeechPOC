@@ -1,16 +1,19 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using TextToSpeechPOC.Data;
+using TextToSpeechPOC.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add this line to configure the options
+builder.Services.Configure<AzureDocumentIntelligenceOptions>(builder.Configuration.GetSection("AzureDocumentIntelligence"));
+builder.Services.Configure<AzureOpenAIOptions>(builder.Configuration.GetSection("AzureOpenAI"));
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton(sp => new DocumentIntelligenceService(
-    builder.Configuration["AzureDocumentIntelligence:Endpoint"],
-    builder.Configuration["AzureDocumentIntelligence:ApiKey"]
-));
+builder.Services.AddSingleton<AzureDocumentIntelligenceService>();
+
 
 var app = builder.Build();
 
