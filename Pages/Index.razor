@@ -1,6 +1,4 @@
 ﻿@page "/"
-@using System.Text.Json
-@inject DocumentIntelligenceService DocumentIntelligenceService
 
 <PageTitle>Text to Speech POC</PageTitle>
 
@@ -34,27 +32,3 @@ Use this page to upload a file, extract text from it, then convert the text to s
     <label for="parsedText">Parsed:</label>
     <textarea id="parsedText" @bind="parsedText" rows="4" cols="50"></textarea>
 </div>
-
-
-@code {
-    private IBrowserFile selectedfile;
-    private string systemPrompt;
-    private string userPrompt;
-    private string parsedText;
-
-    private void HandleFileSelected(InputFileChangeEventArgs e)
-    {
-        selectedfile = e.File;
-    }
-
-    private async Task AnalyzeFile()
-    {
-        if (selectedfile != null)
-        {
-            using var stream = selectedfile.OpenReadStream();
-            var analyzeResult = await DocumentIntelligenceService.ExtractTextFromFileAsync(stream);
-            var cleanedResult = DocumentIntelligenceService.CleanAnalyzeResult(analyzeResult);
-            parsedText = JsonSerializer.Serialize(cleanedResult, new JsonSerializerOptions { WriteIndented = true });
-        }
-    }
-}
