@@ -19,6 +19,18 @@
 
         <button @onclick="AnalyzeFile">Analyze File</button>
 
+        @if (!string.IsNullOrEmpty(audioFileName))
+        {
+            <h2>Audio Output</h2>
+            <audio controls>
+                <source src="@($"api/audio/{audioFileName}")" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            <p>
+                <a href="@($"api/audio/{audioFileName}")" download>Download Audio File</a>
+            </p>
+        }
+        
         <button class="settings-button" @onclick="ToggleSidebar">
             <i class="fas fa-cog"></i>
         </button>

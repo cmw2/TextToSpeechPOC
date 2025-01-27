@@ -20,6 +20,7 @@ public partial class Index
     private bool showSidebar = false;
     private int activeTab = 1;
     private int activeLogTab = 1;
+    private string audioFileName;
 
     // Inject the options
     [Inject]
@@ -27,7 +28,12 @@ public partial class Index
 
     [Inject]
     private AzureDocumentIntelligenceService DocumentIntelligenceService { get; set; }
+
+    [Inject]
+    private AzureSpeechService SpeechService { get; set; }
     
+    [Inject]
+    private AzureOpenAIService AOAIService { get; set; }
     protected override void OnInitialized()
     {
         systemPrompt = AzureOpenAIOptions.Value.SystemPrompt;
@@ -47,8 +53,13 @@ public partial class Index
             using var stream = selectedfile.OpenReadStream();
             var analyzeResult = await DocumentIntelligenceService.ExtractTextFromFileAsync(stream);
             docIntelligenceOutput = JsonSerializer.Serialize(analyzeResult, new JsonSerializerOptions { WriteIndented = true });
-            var cleanedResult = DocumentIntelligenceService.CleanAnalyzeResult(analyzeResult);
-            cleanedDocIntelligenceOutput = JsonSerializer.Serialize(cleanedResult, new JsonSerializerOptions { WriteIndented = true });
+            // var cleanedResult = DocumentIntelligenceService.CleanAnalyzeResult(analyzeResult);
+            // cleanedDocIntelligenceOutput = JsonSerializer.Serialize(cleanedResult, new JsonSerializerOptions { WriteIndented = true });
+            var content = analyzeResult.Content;
+            cleanedDocIntelligenceOutput = content;
+            llmOutput = await AOAIService.GetExtractedText(cleanedDocIntelligenceOutput);
+            var audioFile = await SpeechService.SynthesizeSpeechToFileAsync(llmOutput);
+            audioFileName = Path.GetFileName(audioFile);
         }
     }
 
