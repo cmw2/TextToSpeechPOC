@@ -1,13 +1,9 @@
-
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using Azure;
-using Azure.Identity;
-using Azure.AI.OpenAI;
-using Microsoft.Extensions.Options;
-using TextToSpeechPOC.Options;
 using System.ClientModel;
+using Azure.AI.OpenAI;
+using Azure.Identity;
+using Microsoft.Extensions.Options;
 using OpenAI.Chat;
+using TextToSpeechPOC.Options;
 
 namespace TextToSpeechPOC.Data;
 

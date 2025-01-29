@@ -29,7 +29,7 @@
                 @if (!string.IsNullOrEmpty(cleanedDocIntelligenceOutput))
                 {
                     <p class="mt-2">Read text:</p>
-                    <pre style="max-height: 300px; overflow-y: auto;">@cleanedDocIntelligenceOutput</pre>
+                    <pre class="pre-scrollable">@cleanedDocIntelligenceOutput</pre>
                 }
             </div>
         </div>
@@ -42,7 +42,7 @@
                 @if (!string.IsNullOrEmpty(llmOutput))
                 {
                     <p class="mt-2">Extracted text:</p>
-                    <pre style="max-height: 300px; overflow-y: auto;">@llmOutput</pre>
+                    <pre class="pre-scrollable">@llmOutput</pre>
                 }
             </div>
         </div>
@@ -52,14 +52,14 @@
                 <h2 class="card-title">Generate audio file</h2>
                 <button @onclick="GenerateAudio" class="btn btn-primary">Generate Audio</button>
                 <div>
-                    @if (!string.IsNullOrEmpty(audioFileName))
+                    @if (!string.IsNullOrEmpty(audioFileToken))
                     {
                         <audio controls>
-                            <source src="@($"api/audio/{audioFileName}")" type="audio/wav">
+                            <source src="@($"api/audio/{audioFileToken}")" type="audio/wav">
                             Your browser does not support the audio element.
                         </audio>
                         <p>
-                            <a href="@($"api/audio/{audioFileName}")" download>Download Audio File</a>
+                            <a href="@($"api/audio/{audioFileToken}")" download>Download Audio File</a>
                         </p>
                     }
                 </div>

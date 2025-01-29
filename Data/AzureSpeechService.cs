@@ -9,13 +9,14 @@ public class AzureSpeechService
 {
     private readonly AzureSpeechOptions _options;
     private readonly SpeechConfig _speechConfig;
+    private readonly FileService _fileService;
 
-    public AzureSpeechService(IOptions<AzureSpeechOptions> options)
+    public AzureSpeechService(IOptions<AzureSpeechOptions> options, FileService fileService)
     {
         _options = options.Value;
-        _speechConfig = SpeechConfig.FromSubscription(_options.ApiKey, _options.Region);      
+        _fileService = fileService;
 
-        // The neural multilingual voice can speak different languages based on the input text.
+        _speechConfig = SpeechConfig.FromSubscription(_options.ApiKey, _options.Region);      
         _speechConfig.SpeechSynthesisVoiceName = _options.VoiceName; 
 
     }
@@ -23,14 +24,16 @@ public class AzureSpeechService
     public async Task<string> SynthesizeSpeechToFileAsync(string text)
     {
         string tempFileName = $"speech_{DateTime.Now:yyyyMMdd_HHmmss}.wav";
-        string tempFilePath = Path.Combine(Path.GetTempPath(), tempFileName);
+        string tempFilePath = _fileService.GetNewFilePath(tempFileName);
         var audioConfig = AudioConfig.FromWavFileOutput(tempFilePath);
         using var synthesizer = new SpeechSynthesizer(_speechConfig, audioConfig);
         var result = await synthesizer.SpeakTextAsync(text);
 
         if (result.Reason == ResultReason.SynthesizingAudioCompleted)
         {
-            return tempFilePath;
+            string token = Guid.NewGuid().ToString();
+            _fileService.AddFileMapping(token, tempFilePath);
+            return token;
         }
         else if (result.Reason == ResultReason.Canceled)
         {
@@ -39,5 +42,5 @@ public class AzureSpeechService
         }
 
         throw new Exception("Speech synthesis failed.");
-    }
+    }  
 }

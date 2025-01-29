@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using TextToSpeechPOC.Data;
 using TextToSpeechPOC.Options;
 
@@ -16,6 +14,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddControllers();
 builder.Services.AddSingleton<AzureDocumentIntelligenceService>();
 builder.Services.AddSingleton<AzureOpenAIService>();
+builder.Services.AddSingleton<FileService>();
 builder.Services.AddSingleton<AzureSpeechService>();
 
 var app = builder.Build();

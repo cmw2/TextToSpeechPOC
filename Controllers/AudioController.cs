@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
+using TextToSpeechPOC.Data;
 
 namespace TextToSpeechPOC.Controllers
 {
@@ -7,17 +7,22 @@ namespace TextToSpeechPOC.Controllers
     [ApiController]
     public class AudioController : ControllerBase
     {
-        [HttpGet("{fileName}")]
-        public IActionResult GetAudioFile(string fileName)
+        private readonly FileService _fileService;
+
+        public AudioController(FileService fileService)
         {
-            var filePath = Path.Combine(Path.GetTempPath(), fileName);
-            if (!System.IO.File.Exists(filePath))
+            _fileService = fileService;
+        }
+
+        [HttpGet("{token}")]
+        public IActionResult GetAudioFile(string token)
+        {
+            var fileBytes = _fileService.GetFileBytes(token);
+            if (fileBytes == null)
             {
                 return NotFound();
             }
-
-            var fileBytes = System.IO.File.ReadAllBytes(filePath);
-            return File(fileBytes, "audio/wav", fileName);
+            return File(fileBytes, "audio/wav", Path.GetFileName(token));
         }
     }
 }

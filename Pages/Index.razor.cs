@@ -1,11 +1,9 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
-using System.Threading.Tasks;
 using TextToSpeechPOC.Data;
 using TextToSpeechPOC.Options;
-
 
 namespace TextToSpeechPOC.Pages;
 
@@ -20,7 +18,7 @@ public partial class Index
     private bool showSidebar = false;
     private int activeTab = 1;
     private int activeLogTab = 1;
-    private string audioFileName;
+    private string audioFileToken;
 
     // Inject the options
     [Inject]
@@ -84,8 +82,7 @@ public partial class Index
     {
         if (!string.IsNullOrEmpty(llmOutput))
         {
-            var audioFile = await SpeechService.SynthesizeSpeechToFileAsync(llmOutput);
-            audioFileName = Path.GetFileName(audioFile);
+            audioFileToken = await SpeechService.SynthesizeSpeechToFileAsync(llmOutput);
         }
     }
 

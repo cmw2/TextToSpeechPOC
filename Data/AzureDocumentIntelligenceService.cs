@@ -1,11 +1,8 @@
-
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using Azure;
-using Azure.Identity;
 using Azure.AI.DocumentIntelligence;
+using Azure.Identity;
 using Microsoft.Extensions.Options;
 using TextToSpeechPOC.Options;
 

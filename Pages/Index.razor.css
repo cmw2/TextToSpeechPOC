@@ -113,3 +113,12 @@
 .settings-button i {
     color: #000;
 }
+
+.pre-scrollable {
+    max-height: 300px;
+    overflow-y: auto;
+    width: 90% !important; /* Adjust the width as needed */
+    word-wrap: break-word; /* Ensure long words break to avoid horizontal scroll */
+    white-space: pre-wrap; /* Ensure preformatted text wraps */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
