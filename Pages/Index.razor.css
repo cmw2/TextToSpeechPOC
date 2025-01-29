@@ -4,6 +4,10 @@
     overflow: hidden;
 }
 
+.container-processing {
+    cursor: wait;
+}
+
 .main-content {
     flex: 1;
     padding: 20px;

@@ -10,6 +10,8 @@ namespace TextToSpeechPOC.Pages;
 public partial class Index
 {
     private IBrowserFile selectedfile;
+    private bool isProcessing = false;
+    private string statusMessage = string.Empty;
     private string systemPrompt;
     private string userPrompt;
     private string docIntelligenceOutput;
@@ -50,6 +52,7 @@ public partial class Index
         {
             try
             {
+                isProcessing = true;
                 using var stream = selectedfile.OpenReadStream();
                 var analyzeResult = await DocumentIntelligenceService.ExtractTextFromFileAsync(stream);
                 docIntelligenceOutput = JsonSerializer.Serialize(analyzeResult, new JsonSerializerOptions { WriteIndented = true });
@@ -60,6 +63,13 @@ public partial class Index
             {
                 cleanedDocIntelligenceOutput = $"Error: {ex.Message}";
             }
+            finally
+            {
+                isProcessing = false;
+            }
+        }
+        else {
+            cleanedDocIntelligenceOutput = "Please select a file to analyze.";
         }
     }
 
@@ -69,12 +79,19 @@ public partial class Index
         {
             try
             {
+                isProcessing = true;
                 llmOutput = await AOAIService.GetExtractedText(cleanedDocIntelligenceOutput);
             }
             catch (Exception ex)
             {
                 llmOutput = $"Error: {ex.Message}";
             }
+            finally
+            {
+                isProcessing = false;
+            }
+        }  else {
+            llmOutput = "Please analyze a file first.";
         }
     }
 
@@ -82,8 +99,23 @@ public partial class Index
     {
         if (!string.IsNullOrEmpty(llmOutput))
         {
-            audioFileToken = await SpeechService.SynthesizeSpeechToFileAsync(llmOutput);
-        }
+            isProcessing = true;
+            statusMessage = string.Empty;
+            try
+            {
+                audioFileToken = await SpeechService.SynthesizeSpeechToFileAsync(llmOutput);
+            }
+            catch (Exception ex)
+            {
+                statusMessage = $"Error: {ex.Message}";
+            }
+            finally
+            {
+                isProcessing = false;
+            }
+        } else {
+            statusMessage = "Please extract text first.";
+        }   
     }
 
     private void ToggleSidebar()
