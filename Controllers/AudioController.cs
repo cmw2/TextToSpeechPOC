@@ -22,7 +22,7 @@ namespace TextToSpeechPOC.Controllers
             {
                 return NotFound();
             }
-            return File(fileBytes, "audio/wav", Path.GetFileName(token));
+            return File(fileBytes, "audio/wav", Path.GetFileName(_fileService.GetFilePath(token)));
         }
     }
 }
