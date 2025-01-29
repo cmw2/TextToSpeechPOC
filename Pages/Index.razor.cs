@@ -50,14 +50,40 @@ public partial class Index
     {
         if (selectedfile != null)
         {
-            using var stream = selectedfile.OpenReadStream();
-            var analyzeResult = await DocumentIntelligenceService.ExtractTextFromFileAsync(stream);
-            docIntelligenceOutput = JsonSerializer.Serialize(analyzeResult, new JsonSerializerOptions { WriteIndented = true });
-            // var cleanedResult = DocumentIntelligenceService.CleanAnalyzeResult(analyzeResult);
-            // cleanedDocIntelligenceOutput = JsonSerializer.Serialize(cleanedResult, new JsonSerializerOptions { WriteIndented = true });
-            var content = analyzeResult.Content;
-            cleanedDocIntelligenceOutput = content;
-            llmOutput = await AOAIService.GetExtractedText(cleanedDocIntelligenceOutput);
+            try
+            {
+                using var stream = selectedfile.OpenReadStream();
+                var analyzeResult = await DocumentIntelligenceService.ExtractTextFromFileAsync(stream);
+                docIntelligenceOutput = JsonSerializer.Serialize(analyzeResult, new JsonSerializerOptions { WriteIndented = true });
+                var cleanedResult = DocumentIntelligenceService.CleanAnalyzeResult(analyzeResult);
+                cleanedDocIntelligenceOutput = JsonSerializer.Serialize(cleanedResult, new JsonSerializerOptions { WriteIndented = true });                
+            }
+            catch (Exception ex)
+            {
+                cleanedDocIntelligenceOutput = $"Error: {ex.Message}";
+            }
+        }
+    }
+
+    private async Task ExtractText()
+    {
+        if (!string.IsNullOrEmpty(cleanedDocIntelligenceOutput))
+        {
+            try
+            {
+                llmOutput = await AOAIService.GetExtractedText(cleanedDocIntelligenceOutput);
+            }
+            catch (Exception ex)
+            {
+                llmOutput = $"Error: {ex.Message}";
+            }
+        }
+    }
+
+    private async Task GenerateAudio()
+    {
+        if (!string.IsNullOrEmpty(llmOutput))
+        {
             var audioFile = await SpeechService.SynthesizeSpeechToFileAsync(llmOutput);
             audioFileName = Path.GetFileName(audioFile);
         }
