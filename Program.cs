@@ -12,8 +12,9 @@ builder.Services.Configure<AzureSpeechOptions>(builder.Configuration.GetSection(
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddControllers();
+builder.Services.AddScoped<AzureOpenAIOptionsService>();
 builder.Services.AddSingleton<AzureDocumentIntelligenceService>();
-builder.Services.AddSingleton<AzureOpenAIService>();
+builder.Services.AddTransient<AzureOpenAIService>();
 builder.Services.AddSingleton<FileService>();
 builder.Services.AddSingleton<AzureSpeechService>();
 

@@ -14,6 +14,8 @@ public partial class Index
     private string statusMessage = string.Empty;
     private string systemPrompt;
     private string userPrompt;
+    private float temperature;
+    private int maxTokens;
     private string docIntelligenceOutput;
     private string cleanedDocIntelligenceOutput;
     private string llmOutput;
@@ -34,12 +36,18 @@ public partial class Index
     
     [Inject]
     private AzureOpenAIService AOAIService { get; set; }
+    
+    [Inject]
+    private AzureOpenAIOptionsService AOAIOptionsService { get; set; }
+
     protected override void OnInitialized()
     {
-        systemPrompt = AzureOpenAIOptions.Value.SystemPrompt;
-        userPrompt = AzureOpenAIOptions.Value.UserPrompt;
-        // Use other properties as needed
-}
+        var options = AOAIOptionsService.Options;
+        systemPrompt = options.SystemPrompt;
+        userPrompt = options.UserPrompt;
+        temperature = options.Temperature;
+        maxTokens = options.MaxTokens;
+    }
 
     private void HandleFileSelected(InputFileChangeEventArgs e)
     {
@@ -116,6 +124,11 @@ public partial class Index
         } else {
             statusMessage = "Please extract text first.";
         }   
+    }
+
+    private void UpdateOptions()
+    {
+        AOAIOptionsService.UpdateOptions(systemPrompt, userPrompt, temperature, maxTokens);
     }
 
     private void ToggleSidebar()

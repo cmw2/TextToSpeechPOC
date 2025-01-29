@@ -7,7 +7,7 @@ public class AzureOpenAIOptions
     public string ModelDeploymentName { get; set; }
     public string SystemPrompt { get; set; }
     public string UserPrompt { get; set; }
-    public double Temperature { get; set; }
+    public float Temperature { get; set; }
     public int MaxTokens { get; set; }
     public int TopP { get; set; }
 }

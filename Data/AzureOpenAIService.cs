@@ -13,9 +13,9 @@ public class AzureOpenAIService
     private readonly AzureOpenAIOptions _options;
 
 
-    public AzureOpenAIService(IOptions<AzureOpenAIOptions> options)
+    public AzureOpenAIService(AzureOpenAIOptionsService optionsService)
     {
-        _options = options.Value;
+        _options = optionsService.Options;
         AzureOpenAIClient azureClient;
 
         if (!string.IsNullOrEmpty(_options.ApiKey))
@@ -38,8 +38,13 @@ public class AzureOpenAIService
         {
             new SystemChatMessage(_options.SystemPrompt),
             new UserChatMessage(userInput)
-        };        
-        ChatCompletion completion = await _chatClient.CompleteChatAsync(messages);
+        };       
+        var completionOptions = new ChatCompletionOptions
+        {
+            Temperature = _options.Temperature,
+            MaxOutputTokenCount = _options.MaxTokens
+        };         
+        ChatCompletion completion = await _chatClient.CompleteChatAsync(messages, completionOptions);
         
         return completion.Content[0].Text ?? string.Empty;
     }    
