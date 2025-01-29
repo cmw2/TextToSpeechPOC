@@ -126,3 +126,21 @@
     white-space: pre-wrap; /* Ensure preformatted text wraps */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
+
+.status-message {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    text-align: center;
+}
+
+.status-message p {
+    display: inline-block;
+    padding: 10px;
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    color: #0c5460;
+    border-radius: 4px;
+}

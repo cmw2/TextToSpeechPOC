@@ -58,18 +58,23 @@ public partial class Index
     {
         if (selectedfile != null)
         {
+            isProcessing = true;
+            statusMessage = "Processing...";
+            docIntelligenceOutput = string.Empty;
+            cleanedDocIntelligenceOutput = string.Empty;
             try
             {
-                isProcessing = true;
+                
                 using var stream = selectedfile.OpenReadStream();
                 var analyzeResult = await DocumentIntelligenceService.ExtractTextFromFileAsync(stream);
                 docIntelligenceOutput = JsonSerializer.Serialize(analyzeResult, new JsonSerializerOptions { WriteIndented = true });
                 var cleanedResult = DocumentIntelligenceService.CleanAnalyzeResult(analyzeResult);
-                cleanedDocIntelligenceOutput = JsonSerializer.Serialize(cleanedResult, new JsonSerializerOptions { WriteIndented = true });                
+                cleanedDocIntelligenceOutput = JsonSerializer.Serialize(cleanedResult, new JsonSerializerOptions { WriteIndented = true });
+                statusMessage = string.Empty;
             }
             catch (Exception ex)
             {
-                cleanedDocIntelligenceOutput = $"Error: {ex.Message}";
+                statusMessage = $"Error: {ex.Message}";
             }
             finally
             {
@@ -77,7 +82,7 @@ public partial class Index
             }
         }
         else {
-            cleanedDocIntelligenceOutput = "Please select a file to analyze.";
+            statusMessage = "Please select a file to analyze.";
         }
     }
 
@@ -85,21 +90,24 @@ public partial class Index
     {
         if (!string.IsNullOrEmpty(cleanedDocIntelligenceOutput))
         {
+            isProcessing = true;
+            statusMessage = "Processing...";
+            llmOutput = string.Empty;
             try
             {
-                isProcessing = true;
                 llmOutput = await AOAIService.GetExtractedText(cleanedDocIntelligenceOutput);
+                statusMessage = string.Empty;
             }
             catch (Exception ex)
             {
-                llmOutput = $"Error: {ex.Message}";
+                statusMessage = $"Error: {ex.Message}";
             }
             finally
             {
                 isProcessing = false;
             }
         }  else {
-            llmOutput = "Please analyze a file first.";
+            statusMessage = "Please analyze a file first.";
         }
     }
 
@@ -108,10 +116,12 @@ public partial class Index
         if (!string.IsNullOrEmpty(llmOutput))
         {
             isProcessing = true;
-            statusMessage = string.Empty;
+            statusMessage = "Processing...";
+            audioFileToken = string.Empty;
             try
             {
                 audioFileToken = await SpeechService.SynthesizeSpeechToFileAsync(llmOutput);
+                statusMessage = string.Empty;
             }
             catch (Exception ex)
             {

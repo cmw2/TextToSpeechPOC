@@ -2,6 +2,13 @@
 
 <PageTitle>Text to Speech POC</PageTitle>
 
+<div class="status-message">
+    @if (!string.IsNullOrEmpty(statusMessage))
+    {
+        <p class="alert alert-info">@statusMessage</p>
+    }
+</div>
+
 <div class="container mt-5 @(isProcessing ? "container-processing" : "")">
     <div class="main-content">
         <h1 class="card-title">Text to Speech POC</h1>
@@ -12,7 +19,7 @@
 
         <div class="card mt-4 shadow-sm">
             <div class="card-body">
-                <h2 class="card-title">Upload a file</h2>
+                <h3 class="card-title">Upload a file</h3>
                 <InputFile OnChange="HandleFileSelected" class="form-control" />
                 @if (selectedfile != null)
                 {
@@ -23,7 +30,7 @@
 
         <div class="card mt-4 shadow-sm">
             <div class="card-body">
-                <h2 class="card-title">Read text from the file</h2>
+                <h3 class="card-title">Read text from the file</h3>
                 <button @onclick="AnalyzeFile" class="btn btn-primary" disabled="@(isProcessing)">Process File</button>
                 @if (!string.IsNullOrEmpty(cleanedDocIntelligenceOutput))
                 {
@@ -35,7 +42,7 @@
 
         <div class="card mt-4 shadow-sm">
             <div class="card-body">
-                <h2 class="card-title">Extract text using Azure OpenAI</h2>
+                <h3 class="card-title">Extract text using Azure OpenAI</h3>
                 <button @onclick="ExtractText" class="btn btn-primary" disabled="@(isProcessing)">Extract Text</button>
                 @if (!string.IsNullOrEmpty(llmOutput))
                 {
@@ -47,12 +54,8 @@
 
         <div class="card mt-4 shadow-sm">
             <div class="card-body">
-                <h2 class="card-title">Generate audio file</h2>
+                <h3 class="card-title">Generate audio file</h3>
                 <button @onclick="GenerateAudio" class="btn btn-primary" disabled="@(isProcessing)">Generate Audio</button>
-                @if (!string.IsNullOrEmpty(statusMessage))
-                {
-                    <p class="mt-2">@statusMessage</p>
-                }
                 <div>
                     @if (!string.IsNullOrEmpty(audioFileToken))
                     {
@@ -67,7 +70,6 @@
                 </div>
             </div>
         </div>
-        
 
         <button class="settings-button" @onclick="ToggleSidebar">
             <i class="fas fa-cog"></i>
