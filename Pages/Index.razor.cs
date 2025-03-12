@@ -64,12 +64,16 @@ public partial class Index
             cleanedDocIntelligenceOutput = string.Empty;
             try
             {
-                
                 using var stream = selectedfile.OpenReadStream();
                 var analyzeResult = await DocumentIntelligenceService.ExtractTextFromFileAsync(stream);
                 docIntelligenceOutput = JsonSerializer.Serialize(analyzeResult, new JsonSerializerOptions { WriteIndented = true });
                 var cleanedResult = DocumentIntelligenceService.CleanAnalyzeResult(analyzeResult);
-                cleanedDocIntelligenceOutput = JsonSerializer.Serialize(cleanedResult, new JsonSerializerOptions { WriteIndented = true });
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+                cleanedDocIntelligenceOutput = JsonSerializer.Serialize(cleanedResult, options);
                 statusMessage = string.Empty;
             }
             catch (Exception ex)
@@ -81,7 +85,8 @@ public partial class Index
                 isProcessing = false;
             }
         }
-        else {
+        else
+        {
             statusMessage = "Please select a file to analyze.";
         }
     }

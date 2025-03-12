@@ -11,9 +11,11 @@ namespace TextToSpeechPOC.Data;
 public class AzureDocumentIntelligenceService
 {
     private readonly DocumentIntelligenceClient _client;
+    private readonly ILogger<AzureDocumentIntelligenceService> _logger;
 
-    public AzureDocumentIntelligenceService(IOptions<AzureDocumentIntelligenceOptions> options)
+    public AzureDocumentIntelligenceService(IOptions<AzureDocumentIntelligenceOptions> options, ILogger<AzureDocumentIntelligenceService> logger)
     {
+        _logger = logger;
         var endpoint = options.Value.Endpoint;
         var apiKey = options.Value.ApiKey;
 
@@ -25,16 +27,28 @@ public class AzureDocumentIntelligenceService
         else
         {
             var credential = new DefaultAzureCredential();
+            var o = new DocumentIntelligenceClientOptions();
             _client = new DocumentIntelligenceClient(new Uri(endpoint), credential);
         }
     }
 
     public async Task<AnalyzeResult> ExtractTextFromFileAsync(Stream fileStream)
     {
-        BinaryData binaryData = await BinaryData.FromStreamAsync(fileStream);
-        Operation<AnalyzeResult> operation = await _client.AnalyzeDocumentAsync(WaitUntil.Completed, "prebuilt-layout", binaryData);
-        AnalyzeResult result = operation.Value;
-        return result;
+        try
+        {
+            BinaryData binaryData = await BinaryData.FromStreamAsync(fileStream);
+            var options = new AnalyzeDocumentOptions("prebuilt-layout", binaryData);
+            options.OutputContentFormat = DocumentContentFormat.Markdown;
+            Operation<AnalyzeResult> operation = await _client.AnalyzeDocumentAsync(WaitUntil.Completed, options);
+            AnalyzeResult result = operation.Value;
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error extracting text from file");
+            throw;
+        }
+
     }
 
     public Dictionary<string, object> CleanAnalyzeResult(AnalyzeResult analyzeResult)

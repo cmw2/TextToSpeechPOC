@@ -11,10 +11,12 @@ public class AzureOpenAIService
 {
     private readonly ChatClient  _chatClient;
     private readonly AzureOpenAIOptions _options;
+    private readonly ILogger<AzureOpenAIService> _logger;
 
 
-    public AzureOpenAIService(AzureOpenAIOptionsService optionsService)
+    public AzureOpenAIService(AzureOpenAIOptionsService optionsService, ILogger<AzureOpenAIService> logger)
     {
+        _logger = logger;
         _options = optionsService.Options;
         AzureOpenAIClient azureClient;
 
@@ -34,19 +36,27 @@ public class AzureOpenAIService
 
     public async Task<string> GetChatCompletionAsync(string userInput)
     {
-        var messages = new List<ChatMessage>
+        try
         {
-            new SystemChatMessage(_options.SystemPrompt),
-            new UserChatMessage(userInput)
-        };       
-        var completionOptions = new ChatCompletionOptions
+            var messages = new List<ChatMessage>
+            {
+                new SystemChatMessage(_options.SystemPrompt),
+                new UserChatMessage(userInput)
+            };
+            var completionOptions = new ChatCompletionOptions
+            {
+                Temperature = _options.Temperature,
+                MaxOutputTokenCount = _options.MaxTokens
+            };
+            ChatCompletion completion = await _chatClient.CompleteChatAsync(messages, completionOptions);
+
+            return completion.Content[0].Text ?? string.Empty;
+        }
+        catch (Exception ex)
         {
-            Temperature = _options.Temperature,
-            MaxOutputTokenCount = _options.MaxTokens
-        };         
-        ChatCompletion completion = await _chatClient.CompleteChatAsync(messages, completionOptions);
-        
-        return completion.Content[0].Text ?? string.Empty;
+            _logger.LogError(ex, "Failure in chat completion.");
+            throw;
+        }
     }    
 
     public async Task<string> GetExtractedText(string inputText)
