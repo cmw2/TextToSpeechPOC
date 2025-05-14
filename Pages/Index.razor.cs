@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -70,6 +71,13 @@ public partial class Index
                 docIntelligenceOutput = JsonSerializer.Serialize(analyzeResult, new JsonSerializerOptions { WriteIndented = true });
                 var cleanedResult = DocumentIntelligenceService.CleanAnalyzeResult(analyzeResult);
                 cleanedDocIntelligenceOutput = JsonSerializer.Serialize(cleanedResult, new JsonSerializerOptions { WriteIndented = true });
+
+                // just pull out context from the cleanedDocIntelligenceOutput
+                JsonDocument jsonDocument = JsonDocument.Parse(cleanedDocIntelligenceOutput);
+                JsonElement root = jsonDocument.RootElement;
+                cleanedDocIntelligenceOutput = root.GetProperty("Content").GetString();
+                // end
+
                 statusMessage = string.Empty;
             }
             catch (Exception ex)
